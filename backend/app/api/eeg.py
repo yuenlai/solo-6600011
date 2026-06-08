@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from ..services.eeg_processor import generate_mock_eeg, compute_band_power, compute_spectrogram, SAMPLE_RATE
+from ..services.eeg_processor import generate_mock_eeg, compute_band_power, compute_spectrogram, compute_brain_state, SAMPLE_RATE
 
 router = APIRouter(prefix="/eeg", tags=["eeg"])
 
@@ -12,6 +12,13 @@ async def band_power(channel: str):
     data = generate_mock_eeg(5.0)
     if channel in data['data']:
         return {'channel': channel, 'bands': compute_band_power(data['data'][channel], SAMPLE_RATE)}
+    return {'error': 'Channel not found'}
+
+@router.get("/brain-state/{channel}")
+async def brain_state(channel: str):
+    data = generate_mock_eeg(5.0)
+    if channel in data['data']:
+        return {'channel': channel, 'state': compute_brain_state(data['data'][channel], SAMPLE_RATE)}
     return {'error': 'Channel not found'}
 
 @router.get("/spectrogram/{channel}")

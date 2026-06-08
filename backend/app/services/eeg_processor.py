@@ -24,3 +24,40 @@ def compute_band_power(channel_data: list, sample_rate: int) -> dict:
 def compute_spectrogram(channel_data: list, sample_rate: int) -> dict:
     f, t, Sxx = signal.spectrogram(channel_data, fs=sample_rate, nperseg=128, noverlap=64)
     return {'frequencies': f.tolist(), 'time': t.tolist(), 'power': (10*np.log10(Sxx+1e-10)).tolist()}
+
+def compute_brain_state(channel_data: list, sample_rate: int) -> dict:
+    import time
+    bands = compute_band_power(channel_data, sample_rate)
+    total = sum(bands.values()) + 1e-10
+    beta_rel = bands['beta'] / total
+    alpha_rel = bands['alpha'] / total
+    theta_rel = bands['theta'] / total
+    focus = min(100.0, max(0.0, (beta_rel * 300) + np.random.uniform(-5, 5)))
+    relaxation = min(100.0, max(0.0, (alpha_rel * 300) + np.random.uniform(-5, 5)))
+    fatigue = min(100.0, max(0.0, (theta_rel * 300) + np.random.uniform(-5, 5)))
+    scores = {'focused': focus, 'relaxed': relaxation, 'fatigued': fatigue}
+    max_score = max(scores.values())
+    if max_score < 50:
+        status = 'neutral'
+        status_label = '平稳'
+        status_color = '#757575'
+    else:
+        status = max(scores, key=scores.get)
+        if status == 'focused':
+            status_label = '专注'
+            status_color = '#1976d2'
+        elif status == 'relaxed':
+            status_label = '放松'
+            status_color = '#388e3c'
+        else:
+            status_label = '疲劳'
+            status_color = '#d32f2f'
+    return {
+        'focus': round(focus, 1),
+        'relaxation': round(relaxation, 1),
+        'fatigue': round(fatigue, 1),
+        'status': status,
+        'statusLabel': status_label,
+        'statusColor': status_color,
+        'timestamp': int(time.time() * 1000)
+    }
