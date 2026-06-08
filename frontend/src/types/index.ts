@@ -9,3 +9,13 @@ export interface BrainState {
   statusColor: string;
   timestamp: number;
 }
+export interface ChannelCorrelation {
+  channel: string;
+  targetChannel: string;
+  correlation: number;
+  coherence: number;
+}
+export interface CorrelationData {
+  targetChannel: string;
+  correlations: ChannelCorrelation[];
+}

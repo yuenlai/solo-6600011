@@ -61,3 +61,28 @@ def compute_brain_state(channel_data: list, sample_rate: int) -> dict:
         'statusColor': status_color,
         'timestamp': int(time.time() * 1000)
     }
+
+def compute_correlation(target_channel: str, all_data: dict, sample_rate: int) -> dict:
+    target_data = np.array(all_data[target_channel])
+    correlations = []
+    for ch in CHANNELS:
+        if ch == target_channel:
+            correlations.append({
+                'channel': ch,
+                'targetChannel': target_channel,
+                'correlation': 1.0,
+                'coherence': 1.0
+            })
+            continue
+        ch_data = np.array(all_data[ch])
+        corr = float(np.corrcoef(target_data, ch_data)[0, 1])
+        f, coh = signal.coherence(target_data, ch_data, fs=sample_rate, nperseg=128)
+        alpha_mask = (f >= 8) & (f <= 13)
+        mean_coh = float(np.mean(coh[alpha_mask])) if alpha_mask.any() else 0.0
+        correlations.append({
+            'channel': ch,
+            'targetChannel': target_channel,
+            'correlation': round(corr, 4),
+            'coherence': round(mean_coh, 4)
+        })
+    return {'targetChannel': target_channel, 'correlations': correlations}
