@@ -33,7 +33,7 @@ const ScoreBar: React.FC<{ label: string; value: number; color: string; icon: st
 };
 
 export const BrainStateDashboard: React.FC = () => {
-  const { brainState, selectedChannel } = useEEGStore();
+  const { brainState, selectedChannel, playbackMode, activeRecording, playbackState } = useEEGStore();
   const channelName = CHANNEL_NAMES[selectedChannel] || selectedChannel;
 
   if (!brainState) {
@@ -44,9 +44,10 @@ export const BrainStateDashboard: React.FC = () => {
           <div style={{ fontSize: '28px', fontWeight: 800, letterSpacing: '2px' }}>{selectedChannel}</div>
           <div style={{ fontSize: '12px', opacity: 0.8, marginTop: '2px' }}>{channelName}</div>
         </div>
-        <h3 style={{ margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <h3 style={{ margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           <span>🧠</span>
-          实时脑状态
+          {playbackMode ? '回放脑状态' : '实时脑状态'}
+          {playbackMode && <span style={{ fontSize: '12px', color: '#1565c0', fontWeight: 500 }}>⏮ 回放中</span>}
         </h3>
         <div style={{ color: '#999', padding: '40px 0', textAlign: 'center' }}>等待数据中...</div>
       </div>
@@ -55,15 +56,36 @@ export const BrainStateDashboard: React.FC = () => {
 
   return (
     <div style={{ padding: '16px', background: '#fff', borderRadius: '12px', margin: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-      <div style={{ marginBottom: '16px', padding: '16px', background: 'linear-gradient(135deg, #1565c0, #0d47a1)', borderRadius: '10px', color: '#fff', textAlign: 'center', boxShadow: '0 4px 12px rgba(21, 101, 192, 0.4)' }}>
-        <div style={{ fontSize: '11px', opacity: 0.85, marginBottom: '4px' }}>当前关注通道</div>
+      <div style={{
+        marginBottom: '16px',
+        padding: '16px',
+        background: playbackMode
+          ? 'linear-gradient(135deg, #6a1b9a, #4a148c)'
+          : 'linear-gradient(135deg, #1565c0, #0d47a1)',
+        borderRadius: '10px',
+        color: '#fff',
+        textAlign: 'center',
+        boxShadow: playbackMode
+          ? '0 4px 12px rgba(106, 27, 154, 0.4)'
+          : '0 4px 12px rgba(21, 101, 192, 0.4)',
+        transition: 'all 0.3s ease',
+      }}>
+        <div style={{ fontSize: '11px', opacity: 0.85, marginBottom: '4px' }}>
+          {playbackMode ? '回放通道' : '当前关注通道'}
+        </div>
         <div style={{ fontSize: '32px', fontWeight: 800, letterSpacing: '2px' }}>{selectedChannel}</div>
         <div style={{ fontSize: '13px', opacity: 0.85, marginTop: '2px' }}>{channelName}</div>
+        {playbackMode && activeRecording && (
+          <div style={{ fontSize: '11px', opacity: 0.7, marginTop: '6px' }}>
+            📼 {activeRecording.name} · {playbackState.currentTime.toFixed(1)}s
+          </div>
+        )}
       </div>
 
-      <h3 style={{ margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <h3 style={{ margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
         <span>🧠</span>
-        实时脑状态
+        {playbackMode ? '回放脑状态' : '实时脑状态'}
+        {playbackMode && <span style={{ fontSize: '12px', color: '#1565c0', fontWeight: 500 }}>⏮ 回放模式</span>}
       </h3>
 
       <div

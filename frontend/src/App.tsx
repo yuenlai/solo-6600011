@@ -4,6 +4,7 @@ import { BandPowerChart } from './components/BandPowerChart';
 import { ChannelSelector } from './components/ChannelSelector';
 import { BrainStateDashboard } from './components/BrainStateDashboard';
 import { CorrelationChart } from './components/CorrelationChart';
+import { RecordingPanel } from './components/RecordingPanel';
 
 const App: React.FC = () => (
   <div style={{ display: 'flex', height: '100vh', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
@@ -23,6 +24,7 @@ const App: React.FC = () => (
         </div>
         <div style={{ flex: '0 0 340px', maxWidth: '400px' }}>
           <BrainStateDashboard />
+          <RecordingPanel />
         </div>
       </div>
     </main>

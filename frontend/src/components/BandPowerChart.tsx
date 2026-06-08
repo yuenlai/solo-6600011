@@ -11,16 +11,17 @@ const CHANNEL_NAMES: Record<string, string> = {
 };
 
 export const BandPowerChart: React.FC = () => {
-  const { bandPower, selectedChannel } = useEEGStore();
+  const { bandPower, selectedChannel, playbackMode } = useEEGStore();
   const channelName = CHANNEL_NAMES[selectedChannel] || selectedChannel;
 
   if (!bandPower) {
     return (
       <div style={{ padding: '16px', background: '#fff', borderRadius: '12px', margin: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-        <h3 style={{ margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <h3 style={{ margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '20px' }}>📊</span>
           <span>{selectedChannel}</span>
           <span style={{ fontSize: '13px', color: '#666', fontWeight: 400 }}>{channelName} · 频段能量</span>
+          {playbackMode && <span style={{ fontSize: '12px', color: '#1565c0', fontWeight: 500 }}>⏮ 回放中</span>}
         </h3>
         <div style={{ color: '#999', padding: '40px 0', textAlign: 'center' }}>等待数据中...</div>
       </div>
@@ -35,10 +36,11 @@ export const BandPowerChart: React.FC = () => {
 
   return (
     <div style={{ padding: '16px', background: '#fff', borderRadius: '12px', margin: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-      <h3 style={{ margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <h3 style={{ margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
         <span style={{ fontSize: '20px' }}>📊</span>
         <span>{selectedChannel}</span>
         <span style={{ fontSize: '13px', color: '#666', fontWeight: 400 }}>{channelName} · 频段能量</span>
+        {playbackMode && <span style={{ fontSize: '12px', color: '#1565c0', fontWeight: 500 }}>⏮ 回放模式</span>}
       </h3>
       <ResponsiveContainer width="100%" height={200}>
         <BarChart data={data}>
