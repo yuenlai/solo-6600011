@@ -11,14 +11,10 @@ export const WaveformChart: React.FC = () => {
   const fetchEEG = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get('/api/eeg/stream?duration=3');
-      setEEGData(data);
-      const [{ data: bd }, { data: bs }] = await Promise.all([
-        axios.get(`/api/eeg/bands/${selectedChannel}`),
-        axios.get(`/api/eeg/brain-state/${selectedChannel}`)
-      ]);
-      setBandPower(bd.bands);
-      setBrainState(bs.state);
+      const { data } = await axios.get(`/api/eeg/sample/${selectedChannel}?duration=3`);
+      setEEGData(data.eeg);
+      setBandPower(data.bands);
+      setBrainState(data.brainState);
     } catch {}
     setLoading(false);
   };

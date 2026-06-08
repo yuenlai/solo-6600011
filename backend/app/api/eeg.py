@@ -32,3 +32,16 @@ async def spectrogram(channel: str):
 async def list_channels():
     from ..services.eeg_processor import CHANNELS
     return {'channels': CHANNELS}
+
+@router.get("/sample/{channel}")
+async def full_sample(channel: str, duration: float = 3.0):
+    data = generate_mock_eeg(duration)
+    if channel not in data['data']:
+        return {'error': 'Channel not found'}
+    channel_data = data['data'][channel]
+    return {
+        'channel': channel,
+        'eeg': data,
+        'bands': compute_band_power(channel_data, SAMPLE_RATE),
+        'brainState': compute_brain_state(channel_data, SAMPLE_RATE)
+    }
